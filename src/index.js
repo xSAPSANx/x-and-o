@@ -59,9 +59,15 @@ class Game extends React.Component {
 			)
 		})
 
+		let draw = current.squares.every(function (value) {
+			return value !== null
+		})
+
 		let status
 		if (winner) {
 			status = 'Победитель: ' + (this.state.xIsNext ? 'O' : 'X')
+		} else if (draw) {
+			status = 'Ничья!'
 		} else {
 			status = 'Следующий игрок: ' + (this.state.xIsNext ? 'X' : 'O')
 		}
