@@ -34,6 +34,10 @@ ul {
 	width: 100px;
 }
 
+.squareWin {
+	background-color: rgba(13, 255, 0, 0.6);
+}
+
 .square:focus {
 	outline: none;
 }

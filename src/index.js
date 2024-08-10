@@ -61,7 +61,7 @@ class Game extends React.Component {
 
 		let status
 		if (winner) {
-			status = 'Победитель: ' + winner
+			status = 'Победитель: ' + (this.state.xIsNext ? 'O' : 'X')
 		} else {
 			status = 'Следующий игрок: ' + (this.state.xIsNext ? 'X' : 'O')
 		}
@@ -69,7 +69,7 @@ class Game extends React.Component {
 		return (
 			<div className='game'>
 				<div className='game-board'>
-					<Board squares={current.squares} onClick={i => this.handleClick(i)} />
+					<Board squares={current.squares} combWinBoard={winner} onClick={i => this.handleClick(i)} />
 				</div>
 				<div className='game-info'>
 					<div>{status}</div>
@@ -83,8 +83,16 @@ class Game extends React.Component {
 // ========================================
 
 class Board extends React.Component {
-	renderSquare(i) {
-		return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />
+	renderSquare(index) {
+		let combWin = this.props.combWinBoard
+		if (combWin !== null) {
+			for (let i = 0; i < combWin.length; i++) {
+				if (index === combWin[i]) {
+					return <Square value={this.props.squares[index]} isWinner={true} onClick={() => this.props.onClick(index)} />
+				}
+			}
+		}
+		return <Square value={this.props.squares[index]} isWinner={false} onClick={() => this.props.onClick(index)} />
 	}
 
 	jumpTo(step) {
@@ -121,14 +129,13 @@ class Board extends React.Component {
 
 function Square(props) {
 	return (
-		<button className='square' onClick={props.onClick}>
+		<button className={`square ${props.isWinner ? 'squareWin' : ''}`} onClick={props.onClick}>
 			{props.value}
 		</button>
 	)
 }
 
 // ========================================
-
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(<Game />)
 
@@ -146,7 +153,7 @@ function calculateWinner(squares) {
 	for (let i = 0; i < lines.length; i++) {
 		const [a, b, c] = lines[i]
 		if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-			return squares[a]
+			return lines[i]
 		}
 	}
 	return null
